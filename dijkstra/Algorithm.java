@@ -65,11 +65,10 @@ public class Algorithm {
             return d;
         }
     }
-    
+    //get distance from 2 neighbouring nodes, target is always a neighbouring node
     private int getDistance(Node node, Node target) {
         for (Link link : links) {
-            if (link.getSource().equals(node)
-                    && link.getDestination().equals(target)) {
+            if (link.isLinkOf(node, target)) {
                 return link.getWeight();
             }
         }
@@ -80,7 +79,10 @@ public class Algorithm {
         List<Node> neighbors = new ArrayList<Node>();
         for (Link link : links) {
             //find neighbouring links sourcing from the node and destination node is not in settledNodes
-            if (link.getSource().equals(node) && !settledNodes.contains(link.getDestination())) {
+            if (link.isTwoWay() && link.isLinkOf(node) && !settledNodes.contains(link.getLinkedNodeOf(node))) {
+                neighbors.add(link.getLinkedNodeOf(node));
+            }
+            else if (link.getSource().equals(node) && !settledNodes.contains(link.getDestination())) {
                 neighbors.add(link.getDestination());
             }
         }
