@@ -2,9 +2,13 @@ package ajpca1;
 import dijkstra.*;
 import java.util.LinkedList;
 import java.util.List;
+import dataReader.MrtReader;
 public class AJPCA1 {
 
     public static void main(String[] args) {
+        MrtReader.read();
+    }
+    public static void testAlgorithm() {
         List<Node> mrtlist = new LinkedList<>();
         mrtlist.add(new Node("1", "Changi Airport"));
         mrtlist.add(new Node("2", "MRT2"));
