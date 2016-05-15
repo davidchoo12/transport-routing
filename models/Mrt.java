@@ -12,4 +12,7 @@ public class Mrt extends Node{
     public void addMrtCode(String mrtCode) {
         this.mrtCodes.add(mrtCode);
     }
+    public List<String> getMrtCodes() {
+        return this.mrtCodes;
+    }
 }

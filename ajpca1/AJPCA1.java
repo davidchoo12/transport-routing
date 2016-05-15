@@ -6,7 +6,7 @@ import dataReader.MrtReader;
 public class AJPCA1 {
 
     public static void main(String[] args) {
-        MrtReader.read();
+        MrtReader.readMrtData();
     }
     public static void testAlgorithm() {
         List<Node> mrtlist = new LinkedList<>();
