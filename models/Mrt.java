@@ -15,4 +15,7 @@ public class Mrt extends Node{
     public List<String> getMrtCodes() {
         return this.mrtCodes;
     }
+    public boolean hasCode(String code) {
+        return this.mrtCodes.contains(code);
+    }
 }

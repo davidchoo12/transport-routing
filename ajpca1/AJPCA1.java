@@ -2,11 +2,17 @@ package ajpca1;
 import dijkstra.*;
 import java.util.LinkedList;
 import java.util.List;
-import dataReader.MrtReader;
+import dataReader.MrtData;
+import routing.MrtRoute;
+import models.Mrt;
 public class AJPCA1 {
 
     public static void main(String[] args) {
-        MrtReader.readMrtData();
+        MrtRoute mr = new MrtRoute();
+        LinkedList<Mrt> llm = mr.getMrtRoute("Bishan", "Bukit Batok");
+        for(Mrt m : llm) {
+            System.out.println(m);
+        }
     }
     public static void testAlgorithm() {
         List<Node> mrtlist = new LinkedList<>();
@@ -21,7 +27,7 @@ public class AJPCA1 {
         
         Algorithm a = new Algorithm(mrtlist, linklist);
         a.execute(mrtlist.get(0));
-        LinkedList<Node> path = a.getPath(mrtlist.get(2));
+        LinkedList<Node> path = (LinkedList<Node>) a.getPath(mrtlist.get(2));
         
         for(Node n : path){
             System.out.println(n);

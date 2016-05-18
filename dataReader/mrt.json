@@ -426,6 +426,76 @@
         ]
     },
     {
+        "lineId":"NE",
+        "lineName":"North-East Line",
+        "stations":[
+            {
+                "id": "NE1",
+                "name": "HarbourFront"
+            },
+            {
+                "id": "NE3",
+                "name": "Outram Park"
+            },
+            {
+                "id": "NE4",
+                "name": "Chinatown"
+            },
+            {
+                "id": "NE5",
+                "name": "Clarke Quay"
+            },
+            {
+                "id": "NE6",
+                "name": "Dhoby Ghaut"
+            },
+            {
+                "id": "NE7",
+                "name": "Little India"
+            },
+            {
+                "id": "NE8",
+                "name": "Farrer Park"
+            },
+            {
+                "id": "NE9",
+                "name": "Boon Keng"
+            },
+            {
+                "id": "NE10",
+                "name": "Potong Pasir"
+            },
+            {
+                "id": "NE11",
+                "name": "Woodleigh"
+            },
+            {
+                "id": "NE12",
+                "name": "Serangoon"
+            },
+            {
+                "id": "NE13",
+                "name": "Kovan"
+            },
+            {
+                "id": "NE14",
+                "name": "Hougang"
+            },
+            {
+                "id": "NE15",
+                "name": "Buangkok"
+            },
+            {
+                "id": "NE16",
+                "name": "Sengkang"
+            },
+            {
+                "id": "NE17",
+                "name": "Punggol"
+            }
+        ]
+    },
+    {
         "lineId":"NS",
         "lineName":"North-South Line",
         "stations":[

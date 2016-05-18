@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 public class Algorithm {
-    private final List<Node> nodes;
-    private final List<Link> links;
+    private final List<? extends Node> nodes;
+    private final List<? extends Link> links;
     private Set<Node> settledNodes;
     private Set<Node> unsettledNodes;
     private Map<Node, Node> predecessors;
     private Map<Node, Integer> distance;
-    public Algorithm(List<Node> nodes, List<Link> links){
+    public Algorithm(List<? extends Node> nodes, List<? extends Link> links){
         this.nodes = nodes;
         this.links = links;
     }
@@ -89,7 +89,7 @@ public class Algorithm {
         return neighbors;
     }
     
-    public LinkedList<Node> getPath(Node target) {
+    public LinkedList<? extends Node> getPath(Node target) {
         LinkedList<Node> path = new LinkedList<>();
         Node step = target;
         // check if a path exists
