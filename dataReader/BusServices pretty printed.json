@@ -5200,19 +5200,6 @@
         "LoopDesc":"Choa Chu Kang St 62"
     },
     {
-        "ServiceNo":"307",
-        "Operator":"SMRT",
-        "Direction":1,
-        "Category":"INTRA-TOWN",
-        "OriginCode":"44009",
-        "DestinationCode":"44009",
-        "AM_Peak_Freq":"4-9",
-        "AM_Offpeak_Freq":"7-11",
-        "PM_Peak_Freq":"7-10",
-        "PM_Offpeak_Freq":"8-15",
-        "LoopDesc":"Teck Whye Ave"
-    },
-    {
         "ServiceNo":"308",
         "Operator":"SMRT",
         "Direction":1,
@@ -5447,19 +5434,6 @@
         "LoopDesc":"Yishun Ave 1"
     },
     {
-        "ServiceNo":"811",
-        "Operator":"SMRT",
-        "Direction":1,
-        "Category":"INTRA-TOWN",
-        "OriginCode":"59009",
-        "DestinationCode":"59161",
-        "AM_Peak_Freq":"3-7",
-        "AM_Offpeak_Freq":"5-9",
-        "PM_Peak_Freq":"4-10",
-        "PM_Offpeak_Freq":"5-14",
-        "LoopDesc":"Yishun Ave 2"
-    },
-    {
         "ServiceNo":"812",
         "Operator":"SMRT",
         "Direction":1,
@@ -5471,19 +5445,6 @@
         "PM_Peak_Freq":"9-10",
         "PM_Offpeak_Freq":"9-16",
         "LoopDesc":"Yishun Ave 3"
-    },
-    {
-        "ServiceNo":"812",
-        "Operator":"SMRT",
-        "Direction":1,
-        "Category":"INTRA-TOWN",
-        "OriginCode":"59009",
-        "DestinationCode":"59161",
-        "AM_Peak_Freq":"9-10",
-        "AM_Offpeak_Freq":"8-12",
-        "PM_Peak_Freq":"9-10",
-        "PM_Offpeak_Freq":"9-16",
-        "LoopDesc":"Yishun Ave 4"
     },
     {
         "ServiceNo":"825",

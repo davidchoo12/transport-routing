@@ -1,6 +1,6 @@
 package routing;
 import dijkstra.Algorithm;
-import models.*;
+import models.Mrt;
 import dataReader.MrtData;
 import java.util.ArrayList;
 import java.util.LinkedList;

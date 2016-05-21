@@ -1,17 +1,28 @@
 package ajpca1;
+import dataReader.BusData;
 import dijkstra.*;
 import java.util.LinkedList;
 import java.util.List;
 import dataReader.MrtData;
-import routing.MrtRoute;
+import routing.*;
 import models.Mrt;
+import models.BusStop;
 public class AJPCA1 {
 
     public static void main(String[] args) {
-        MrtRoute mr = new MrtRoute();
-        LinkedList<Mrt> llm = mr.getMrtRoute("Bishan", "Bukit Batok");
-        for(Mrt m : llm) {
-            System.out.println(m);
+//        MrtRoute mr = new MrtRoute();
+//        LinkedList<Mrt> llm = mr.getMrtRoute("Bishan", "Bukit Batok");
+//        for(Mrt m : llm) {
+//            System.out.println(m);
+//        }
+        
+//        BusData.readData();
+        
+        
+        BusRoute mr = new BusRoute();
+        LinkedList<BusStop> llbs = mr.getBusRoute("19029", "19081");
+        for(BusStop bs : llbs) {
+            System.out.println(bs);
         }
     }
     public static void testAlgorithm() {
