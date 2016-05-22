@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 public class BusRoute {
     public BusRoute() {
-        BusData.readData();
+//        BusData.readData();
     }
     public LinkedList<BusStop> getBusRoute(String start, String end) {
         System.out.println(BusData.BUS_STOPS.get(start) +  " " + BusData.BUS_STOPS.get(end));

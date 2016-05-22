@@ -4,12 +4,19 @@ import dijkstra.*;
 import java.util.LinkedList;
 import java.util.List;
 import dataReader.MrtData;
+import javafx.application.Application;
+import static javafx.application.Application.launch;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import routing.*;
 import models.Mrt;
 import models.BusStop;
+//import ui.MainUI;
 public class AJPCA1 {
 
-    public static void main(String[] args) {
+//    public static void main(String[] args) {
 //        MrtRoute mr = new MrtRoute();
 //        LinkedList<Mrt> llm = mr.getMrtRoute("Bishan", "Bukit Batok");
 //        for(Mrt m : llm) {
@@ -18,13 +25,13 @@ public class AJPCA1 {
         
 //        BusData.readData();
         
-        
-        BusRoute mr = new BusRoute();
-        LinkedList<BusStop> llbs = mr.getBusRoute("19029", "19081");
-        for(BusStop bs : llbs) {
-            System.out.println(bs);
-        }
-    }
+//        BusRoute mr = new BusRoute();
+//        LinkedList<BusStop> llbs = mr.getBusRoute("19029", "19081");
+//        for(BusStop bs : llbs) {
+//            System.out.println(bs);
+//        }
+//        (new MainUI()).setVisible(true);
+//    }
     public static void testAlgorithm() {
         List<Node> mrtlist = new LinkedList<>();
         mrtlist.add(new Node("1", "Changi Airport"));

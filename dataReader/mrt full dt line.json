@@ -204,6 +204,78 @@
             {
                 "id": "DT19",
                 "name": "Chinatown"
+            },
+            {
+                "id": "DT20",
+                "name": "Fort Canning"
+            },
+            {
+                "id": "DT21",
+                "name": "Bencoolen"
+            },
+            {
+                "id": "DT22",
+                "name": "Jalan Besar"
+            },
+            {
+                "id": "DT23",
+                "name": "Bendemeer"
+            },
+            {
+                "id": "DT24",
+                "name": "Geylang Bahru"
+            },
+            {
+                "id": "DT25",
+                "name": "Mattar"
+            },
+            {
+                "id": "DT26",
+                "name": "MacPherson"
+            },
+            {
+                "id": "DT27",
+                "name": "Ubi"
+            },
+            {
+                "id": "DT28",
+                "name": "Kaki Bukit"
+            },
+            {
+                "id": "DT29",
+                "name": "Bedok North"
+            },
+            {
+                "id": "DT30",
+                "name": "Bedok Reservoir"
+            },
+            {
+                "id": "DT31",
+                "name": "Tampines West"
+            },
+            {
+                "id": "DT32",
+                "name": "Tampines"
+            },
+            {
+                "id": "DT33",
+                "name": "Tampines East"
+            },
+            {
+                "id": "DT34",
+                "name": "Upper Changi"
+            },
+            {
+                "id": "DT35",
+                "name": "Expo"
+            },
+            {
+                "id": "DT36",
+                "name": "Xilin"
+            },
+            {
+                "id": "DT37",
+                "name": "Sungei Bedok"
             }
         ]
     },

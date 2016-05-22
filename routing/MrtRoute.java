@@ -7,14 +7,13 @@ import java.util.LinkedList;
 import java.util.List;
 public class MrtRoute {
     public MrtRoute() {
-        MrtData.readData();
+//        MrtData.readData();
     }
     public LinkedList<Mrt> getMrtRoute(String start, String end) {
-        return getMrtRoute(MrtData.MRTS.get(start), MrtData.MRTS.get(end));
+        return getMrtRoute(MrtData.MRTS_MAP.get(start), MrtData.MRTS_MAP.get(end));
     }
     private LinkedList<Mrt> getMrtRoute(Mrt start, Mrt end) {
-        List<Mrt> mrtList = new ArrayList<Mrt>(MrtData.MRTS.values());
-        Algorithm a = new Algorithm(mrtList, MrtData.MRT_LINKS);
+        Algorithm a = new Algorithm(MrtData.MRTS_LIST_SORTED, MrtData.MRT_LINKS);
         a.execute(start);
         return (LinkedList<Mrt>)a.getPath(end);
     }

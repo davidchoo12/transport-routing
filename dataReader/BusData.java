@@ -9,15 +9,19 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import models.BusLink;
 import models.BusService;
 import models.BusStop;
 public class BusData {
     public static HashSet<BusService> BUSES = new HashSet<>();
+    public static List<BusService> BUS_LIST_SORTED;
     public static HashMap<String, BusStop> BUS_STOPS = new HashMap<>();
     public static List<BusLink> BUS_LINKS = new ArrayList<>();
     public static HashMap<BusService, ArrayList<BusLink>> BUS_ROUTES = new HashMap<>();
@@ -30,6 +34,15 @@ public class BusData {
         readBusStops();
         readBusServices();
         readLinkData();
+        Set<BusService> set = BUSES;
+        BUS_LIST_SORTED = new ArrayList<>(set);
+        Collections.sort(BUS_LIST_SORTED, new Comparator<BusService>()
+            {
+                public int compare(BusService b1, BusService b2)
+                    {
+                        return b1.getServiceNo().toUpperCase().compareTo(b2.getServiceNo().toUpperCase());
+                    }
+            });
     }
     private static void readBusStops(){
         try {
@@ -45,9 +58,9 @@ public class BusData {
                 double longitude = busStop.get("Longitude").getAsDouble();
                 BUS_STOPS.put(busStopCode, new BusStop(busStopCode, roadName, desc, latitude, longitude));
             }
-            BUS_STOPS.forEach((String key, BusStop obj) -> {
-                System.out.println(key + ": " + obj.getName());
-            });
+//            BUS_STOPS.forEach((String key, BusStop obj) -> {
+//                System.out.println(key + ": " + obj.getName());
+//            });
 //            System.out.println(BUS_STOPS.size());
         } catch (Exception e) {
             e.printStackTrace();
