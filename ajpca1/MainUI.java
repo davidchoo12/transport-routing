@@ -1,10 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ajpca1;
+import java.awt.Image;
 import dataReader.BusData;
 import java.util.ArrayList;
 import dataReader.MrtData;
@@ -12,10 +7,8 @@ import java.awt.Color;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.collections.transformation.SortedList;
 import models.*;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -24,10 +17,13 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import routing.MrtRoute;
-import ui.EnabledJComboBoxRenderer;
-import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.swing.BrowserView;
-import java.util.ListIterator;
+import java.awt.Frame;
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import routing.BusRoute;
 
 /**
@@ -63,6 +59,24 @@ public class MainUI extends javax.swing.JFrame {
         tp.setCharacterAttributes(aset, false);
         tp.replaceSelection(msg);
     }
+    
+    private void displayRouteMap(JLabel mapLabel, List<BusStop> busStopList) {
+        String apiKey = "AIzaSyBILbPv2joHTtfZ12YhujOI5gji2nfElP8";
+        String staticMapUrl = "https://maps.googleapis.com/maps/api/staticmap?key= %s &size= %s x %s &feature=road.local&path=color:orange%%7Cweight:5 %s &markers=color:blue %s";
+        StringBuilder latLongChainBuilder = new StringBuilder();
+        for(BusStop bs : busStopList)
+            latLongChainBuilder.append("%7C").append(Math.round(bs.getLatitude() * 100000) / 100000.0).append(',').append(Math.round(bs.getLongitude() * 100000) / 100000.0);
+        staticMapUrl = String.format(staticMapUrl, apiKey, mapLabel.getParent().getWidth(), mapLabel.getParent().getHeight(), latLongChainBuilder.toString(), latLongChainBuilder.toString());
+        staticMapUrl = staticMapUrl.replaceAll("\\s", "");
+        try {
+            System.out.println(staticMapUrl);
+            mapLabel.setText("");
+            Image staticMap = ImageIO.read(new URL(staticMapUrl));
+            mapLabel.setIcon(new ImageIcon(staticMap));
+        } catch (IOException ex) {
+            mapLabel.setText("Unable to display map due to exceeding limit of bus stops");
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -79,15 +93,16 @@ public class MainUI extends javax.swing.JFrame {
         startMrtComboBox = new javax.swing.JComboBox();
         endMrtComboBox = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
-        findPathButton = new javax.swing.JButton();
-        swapButton = new javax.swing.JButton();
+        mrtFindPathButton = new javax.swing.JButton();
+        mrtSwapButton = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         mrtTextPane = new javax.swing.JTextPane();
-        jPanel2 = new javax.swing.JPanel();
-        busNoComboBox = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        busServiceTextArea = new javax.swing.JTextArea();
+        jPanel3 = new javax.swing.JPanel();
+        mrtLineMrtComboBox = new javax.swing.JComboBox();
+        jLabel6 = new javax.swing.JLabel();
+        mrtLinePrintButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        mrtLineTextPane = new javax.swing.JTextPane();
         jPanel4 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         startBusStopComboBox = new javax.swing.JComboBox();
@@ -95,33 +110,46 @@ public class MainUI extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         busStopTextArea = new javax.swing.JTextArea();
-        busStopFindPathButton = new javax.swing.JButton();
-        busStopSwapButton = new javax.swing.JButton();
+        busFindPathButton = new javax.swing.JButton();
+        busSwapButton = new javax.swing.JButton();
         mapPanel = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        mrtLineMrtComboBox = new javax.swing.JComboBox();
-        jLabel6 = new javax.swing.JLabel();
-        mrtLinePrintButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        mrtLineTextPane = new javax.swing.JTextPane();
+        mapLabel = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        busNoComboBox = new javax.swing.JComboBox();
+        jLabel3 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        busServiceTextArea = new javax.swing.JTextArea();
+        busServiceMapPanel = new javax.swing.JPanel();
+        busServiceMapLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        busStopTab.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
         jLabel1.setText("Starting station");
 
+        startMrtComboBox.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+
+        endMrtComboBox.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
         jLabel2.setText("Destination station");
 
-        findPathButton.setText("Find Path");
-        findPathButton.addActionListener(new java.awt.event.ActionListener() {
+        mrtFindPathButton.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        mrtFindPathButton.setText("Find Path");
+        mrtFindPathButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                findPathButtonActionPerformed(evt);
+                mrtFindPathButtonActionPerformed(evt);
             }
         });
 
-        swapButton.setText("Swap");
-        swapButton.addActionListener(new java.awt.event.ActionListener() {
+        mrtSwapButton.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        mrtSwapButton.setText("Swap");
+        mrtSwapButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                swapButtonActionPerformed(evt);
+                mrtSwapButtonActionPerformed(evt);
             }
         });
 
@@ -148,13 +176,13 @@ public class MainUI extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
-                            .addComponent(endMrtComboBox, 0, 355, Short.MAX_VALUE)
-                            .addComponent(startMrtComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(43, 43, 43)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(findPathButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(swapButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 148, Short.MAX_VALUE))
+                            .addComponent(startMrtComboBox, 0, 350, Short.MAX_VALUE)
+                            .addComponent(endMrtComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(mrtSwapButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(mrtFindPathButton))
+                        .addGap(0, 902, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane3)
                         .addContainerGap())))
@@ -167,151 +195,29 @@ public class MainUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(startMrtComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(swapButton))
+                    .addComponent(mrtSwapButton))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(endMrtComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(findPathButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mrtFindPathButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        busStopTab.addTab("MRT", jPanel1);
+        busStopTab.addTab("MRT Pathfinder", jPanel1);
 
-        busNoComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                busNoComboBoxActionPerformed(evt);
-            }
-        });
+        jPanel3.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
 
-        jLabel3.setText("Bus Service No");
+        mrtLineMrtComboBox.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
 
-        busServiceTextArea.setEditable(false);
-        busServiceTextArea.setColumns(20);
-        busServiceTextArea.setFont(new java.awt.Font("Consolas", 0, 13)); // NOI18N
-        busServiceTextArea.setRows(5);
-        busServiceTextArea.setAutoscrolls(false);
-        jScrollPane2.setViewportView(busServiceTextArea);
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(busNoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(busNoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        busStopTab.addTab("Bus Service", jPanel2);
-
-        jLabel4.setText("Starting bus stop");
-
-        jLabel5.setText("Destination bus stop");
-
-        busStopTextArea.setEditable(false);
-        busStopTextArea.setColumns(20);
-        busStopTextArea.setFont(new java.awt.Font("Consolas", 0, 13)); // NOI18N
-        busStopTextArea.setRows(5);
-        busStopTextArea.setAutoscrolls(false);
-        jScrollPane4.setViewportView(busStopTextArea);
-
-        busStopFindPathButton.setText("Find Path");
-        busStopFindPathButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                busStopFindPathButtonActionPerformed(evt);
-            }
-        });
-
-        busStopSwapButton.setText("Swap");
-        busStopSwapButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                busStopSwapButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout mapPanelLayout = new javax.swing.GroupLayout(mapPanel);
-        mapPanel.setLayout(mapPanelLayout);
-        mapPanelLayout.setHorizontalGroup(
-            mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        mapPanelLayout.setVerticalGroup(
-            mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(mapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(endBusStopComboBox, 0, 350, Short.MAX_VALUE)
-                    .addComponent(startBusStopComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(48, 48, 48)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                        .addComponent(jScrollPane4)
-                        .addContainerGap())
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(busStopFindPathButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(busStopSwapButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 148, Short.MAX_VALUE))))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(startBusStopComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(busStopSwapButton))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(endBusStopComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(busStopFindPathButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-
-        busStopTab.addTab("Bus Stop", jPanel4);
-
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
         jLabel6.setText("MRT station");
 
+        mrtLinePrintButton.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
         mrtLinePrintButton.setText("Print MRT Line");
         mrtLinePrintButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -336,8 +242,8 @@ public class MainUI extends javax.swing.JFrame {
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(mrtLineMrtComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(mrtLinePrintButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 145, Short.MAX_VALUE)))
+                                .addComponent(mrtLinePrintButton)))
+                        .addGap(0, 862, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -350,17 +256,199 @@ public class MainUI extends javax.swing.JFrame {
                     .addComponent(mrtLineMrtComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(mrtLinePrintButton))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         busStopTab.addTab("MRT Line", jPanel3);
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        jLabel4.setText("Starting bus stop");
+
+        startBusStopComboBox.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+
+        endBusStopComboBox.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        jLabel5.setText("Destination bus stop");
+
+        busStopTextArea.setEditable(false);
+        busStopTextArea.setColumns(20);
+        busStopTextArea.setFont(new java.awt.Font("Consolas", 0, 13)); // NOI18N
+        busStopTextArea.setRows(5);
+        busStopTextArea.setAutoscrolls(false);
+        jScrollPane4.setViewportView(busStopTextArea);
+
+        busFindPathButton.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        busFindPathButton.setText("Find Path");
+        busFindPathButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                busFindPathButtonActionPerformed(evt);
+            }
+        });
+
+        busSwapButton.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        busSwapButton.setText("Swap");
+        busSwapButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                busSwapButtonActionPerformed(evt);
+            }
+        });
+
+        mapPanel.setBackground(new java.awt.Color(255, 255, 255));
+        mapPanel.setPreferredSize(new java.awt.Dimension(1366, 14));
+
+        mapLabel.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        mapLabel.setText("        ");
+
+        javax.swing.GroupLayout mapPanelLayout = new javax.swing.GroupLayout(mapPanel);
+        mapPanel.setLayout(mapPanelLayout);
+        mapPanelLayout.setHorizontalGroup(
+            mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mapPanelLayout.createSequentialGroup()
+                .addComponent(mapLabel)
+                .addGap(0, 608, Short.MAX_VALUE))
+        );
+        mapPanelLayout.setVerticalGroup(
+            mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mapPanelLayout.createSequentialGroup()
+                .addComponent(mapLabel)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        jLabel7.setText("<html><b>Note:</b><br />Some bus stops does not have buses to reach, according to the data obtained from LTA.</html>");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5)
+                            .addComponent(startBusStopComboBox, 0, 349, Short.MAX_VALUE)
+                            .addComponent(endBusStopComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(busFindPathButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(busSwapButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 687, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addComponent(mapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(startBusStopComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(busSwapButton))
+                                .addGap(19, 19, 19)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel5)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(endBusStopComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(busFindPathButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel7))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+
+        busStopTab.addTab("Bus Pathfinder", jPanel4);
+
+        busNoComboBox.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        busNoComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                busNoComboBoxActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        jLabel3.setText("Bus Service No");
+
+        busServiceTextArea.setEditable(false);
+        busServiceTextArea.setColumns(20);
+        busServiceTextArea.setFont(new java.awt.Font("Consolas", 0, 13)); // NOI18N
+        busServiceTextArea.setRows(5);
+        busServiceTextArea.setAutoscrolls(false);
+        jScrollPane2.setViewportView(busServiceTextArea);
+
+        busServiceMapPanel.setBackground(new java.awt.Color(255, 255, 255));
+        busServiceMapPanel.setPreferredSize(new java.awt.Dimension(1366, 14));
+
+        busServiceMapLabel.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        busServiceMapLabel.setText("        ");
+
+        javax.swing.GroupLayout busServiceMapPanelLayout = new javax.swing.GroupLayout(busServiceMapPanel);
+        busServiceMapPanel.setLayout(busServiceMapPanelLayout);
+        busServiceMapPanelLayout.setHorizontalGroup(
+            busServiceMapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(busServiceMapPanelLayout.createSequentialGroup()
+                .addComponent(busServiceMapLabel)
+                .addGap(0, 608, Short.MAX_VALUE))
+        );
+        busServiceMapPanelLayout.setVerticalGroup(
+            busServiceMapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(busServiceMapPanelLayout.createSequentialGroup()
+                .addComponent(busServiceMapLabel)
+                .addGap(0, 451, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(busNoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 687, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(busServiceMapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(busServiceMapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(busNoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane2)))
+                .addContainerGap())
+        );
+
+        busStopTab.addTab("Bus Service", jPanel2);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(busStopTab)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(busStopTab)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -372,14 +460,14 @@ public class MainUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void busStopSwapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_busStopSwapButtonActionPerformed
+    private void busSwapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_busSwapButtonActionPerformed
         int startSelected = startBusStopComboBox.getSelectedIndex();
         int endSelected = endBusStopComboBox.getSelectedIndex();
         startBusStopComboBox.setSelectedIndex(endSelected);
         endBusStopComboBox.setSelectedIndex(startSelected);
-    }//GEN-LAST:event_busStopSwapButtonActionPerformed
+    }//GEN-LAST:event_busSwapButtonActionPerformed
 
-    private void busStopFindPathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_busStopFindPathButtonActionPerformed
+    private void busFindPathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_busFindPathButtonActionPerformed
         BusStop start = (BusStop)startBusStopComboBox.getSelectedItem();
         BusStop end = (BusStop)endBusStopComboBox.getSelectedItem();
         if (start.equals(end)){
@@ -387,68 +475,50 @@ public class MainUI extends javax.swing.JFrame {
             return;
         }
         BusRoute br = new BusRoute();
-        System.out.println("start finding path");
         LinkedList<BusStop> busStopsEnRoute = br.getBusRoute(start.getId(), end.getId());
+        if (busStopsEnRoute == null) { //bus stop unreachable
+            busStopTextArea.setText("One or both of the bus stops are unreachable.");
+            return;
+        }
         LinkedList<BusRoute.BusSubRoute> subRoutes = br.getBusSubRoutes(busStopsEnRoute);
-        System.out.println("path found");
-        busStopTextArea.setText(""); //clear text area
-        //        mrtTextArea.setText("----start of path----\n");
-        for(BusStop bs : busStopsEnRoute) {
-            busStopTextArea.append(bs + "\n");
-        }
-        for(BusRoute.BusSubRoute b : subRoutes) {
+        busStopTextArea.setText("You will have to travel " + busStopsEnRoute.size() + " bus stops.\n");
+        displayRouteMap(mapLabel, busStopsEnRoute);
+        for(BusRoute.BusSubRoute b : subRoutes)
             busStopTextArea.append(b.toString() + "\n");
-            System.out.println(b.toString());
-//            appendToPane(mrtTextPane, m.toString() + "\n", m.getMrtLine().getLineColor());
-        }
-        //        mrtTextArea.append("----end of path----\n");
-    }//GEN-LAST:event_busStopFindPathButtonActionPerformed
+    }//GEN-LAST:event_busFindPathButtonActionPerformed
 
     private void busNoComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_busNoComboBoxActionPerformed
         BusService selected = (BusService)busNoComboBox.getSelectedItem();
-        ArrayList<BusLink> links = BusData.BUS_ROUTES.get(selected);
-        busServiceTextArea.setText(""); //clear text area
-        //        busServiceTextArea.setText("----start of bus stops----\n");
-        for (BusLink link : links) {
-            busServiceTextArea.append(link.getSource().toString() + "\n");
-        }
-        busServiceTextArea.append(links.get(links.size()-1).getDestination().toString() + "\n");
-        //        busServiceTextArea.append("----end of bus stops----\n");
-        busServiceTextArea.setCaretPosition(0);
+        ArrayList<BusStop> stops = BusData.BUS_SERVICE_STOP_MAP.get(selected);
+        busServiceTextArea.setText("");
+        for (BusStop stop : stops)
+            busServiceTextArea.append(stop.toString() + "\n");
+        displayRouteMap(busServiceMapLabel, stops);
     }//GEN-LAST:event_busNoComboBoxActionPerformed
 
-    private void swapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_swapButtonActionPerformed
+    private void mrtSwapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mrtSwapButtonActionPerformed
         int startSelected = startMrtComboBox.getSelectedIndex();
         int endSelected = endMrtComboBox.getSelectedIndex();
         startMrtComboBox.setSelectedIndex(endSelected);
         endMrtComboBox.setSelectedIndex(startSelected);
-    }//GEN-LAST:event_swapButtonActionPerformed
+    }//GEN-LAST:event_mrtSwapButtonActionPerformed
 
-    private void findPathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findPathButtonActionPerformed
+    private void mrtFindPathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mrtFindPathButtonActionPerformed
         Mrt start = (Mrt)startMrtComboBox.getSelectedItem();
         Mrt end = (Mrt)endMrtComboBox.getSelectedItem();
         if (start.equals(end)){
             mrtTextPane.setText("");
-            appendToPane(mrtTextPane, "Please select different starting and destination bus stops.", Color.RED);
+            appendToPane(mrtTextPane, "Please select different starting and destination Mrt stations.", Color.RED);
             return;
         }
         MrtRoute mr = new MrtRoute();
         LinkedList<Mrt> llm = mr.getMrtRoute(start.getName(), end.getName());
-        mrtTextPane.setText("");
-        //        mrtTextArea.setText("----start of path----\n");
-//        ListIterator<Mrt> it = llm.listIterator();
-//        while(it.hasNext()) {
-//            Mrt m = it.next();
-//            appendToPane(mrtTextPane, m.toString() + "\n", coloriseMrt(it));
-//            it.next();
-//        }
+        mrtTextPane.setText("You will have to travel " + llm.size() + " stations.\n");
         
         for(Mrt m : llm) {
-            if (m.isInterchange())
-                appendToPane(mrtTextPane, m.toString() + "\n", m.getMrtLines().get(0).getLineColor());
+            appendToPane(mrtTextPane, m.toString() + "\n", m.getMrtLines().get(0).getLineColor());
         }
-        //        mrtTextArea.append("----end of path----\n");
-    }//GEN-LAST:event_findPathButtonActionPerformed
+    }//GEN-LAST:event_mrtFindPathButtonActionPerformed
 
     private void mrtTextPaneFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_mrtTextPaneFocusGained
         mrtTextPane.setEditable(false);
@@ -476,14 +546,6 @@ public class MainUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_mrtLinePrintButtonActionPerformed
 
-//    private Color coloriseMrt(ListIterator<Mrt> it) {
-//        Mrt m = it.previous();
-//        if(!m.isInterchange() || m.isInterchange() && it.hasPrevious())
-//            return m.getMrtLines().get(0).getLineColor();
-//        else { //if starts with an interchange
-//            return coloriseMrt(it);
-//        }
-//    }
     /**
      * @param args the command line arguments
      */
@@ -495,26 +557,30 @@ public class MainUI extends javax.swing.JFrame {
         }
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new MainUI().setVisible(true);
+            MainUI mainUi = new MainUI();
+            mainUi.setExtendedState(Frame.MAXIMIZED_BOTH);
+            mainUi.setVisible(true);
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton busFindPathButton;
     private javax.swing.JComboBox busNoComboBox;
+    private javax.swing.JLabel busServiceMapLabel;
+    private javax.swing.JPanel busServiceMapPanel;
     private javax.swing.JTextArea busServiceTextArea;
-    private javax.swing.JButton busStopFindPathButton;
-    private javax.swing.JButton busStopSwapButton;
     private javax.swing.JTabbedPane busStopTab;
     private javax.swing.JTextArea busStopTextArea;
+    private javax.swing.JButton busSwapButton;
     private javax.swing.JComboBox endBusStopComboBox;
     private javax.swing.JComboBox endMrtComboBox;
-    private javax.swing.JButton findPathButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -523,13 +589,15 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JLabel mapLabel;
     private javax.swing.JPanel mapPanel;
+    private javax.swing.JButton mrtFindPathButton;
     private javax.swing.JComboBox mrtLineMrtComboBox;
     private javax.swing.JButton mrtLinePrintButton;
     private javax.swing.JTextPane mrtLineTextPane;
+    private javax.swing.JButton mrtSwapButton;
     private javax.swing.JTextPane mrtTextPane;
     private javax.swing.JComboBox startBusStopComboBox;
     private javax.swing.JComboBox startMrtComboBox;
-    private javax.swing.JButton swapButton;
     // End of variables declaration//GEN-END:variables
 }

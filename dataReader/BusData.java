@@ -4,77 +4,40 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import models.BusLink;
 import models.BusService;
 import models.BusStop;
 public class BusData {
-    public static HashSet<BusService> BUSES = new HashSet<>();
+    private static HashSet<BusService> busServiceSet = new HashSet<>();
     public static List<BusService> BUS_SERVICES_SORTED;
     public static HashMap<String, BusStop> BUS_STOPS = new HashMap<>();
     public static List<BusStop> BUS_STOPS_SORTED;
     public static List<BusLink> BUS_LINKS = new ArrayList<>();
-    public static HashMap<BusService, ArrayList<BusLink>> BUS_ROUTES = new HashMap<>();
+    public static HashMap<BusService, ArrayList<BusStop>> BUS_SERVICE_STOP_MAP = new HashMap<>();
     public static HashMap<BusStop, ArrayList<BusService>>  BUS_STOP_SERVICE_MAP = new HashMap<>();
     
-//    public static ArrayList<ArrayList<MrtLink>>
-    private static String busServicesJsonPath = "src/dataReader/BusServices.json";
-    private static String busStopsJsonPath = "src/dataReader/BusStops.json";
-    private static String busRoutesJsonPath = "src/dataReader/BusRoutes.json";
+    private static final String busServicesJsonPath = "src/dataReader/data/BusServices.json";
+    private static final String busStopsJsonPath = "src/dataReader/data/BusStops.json";
+    private static final String busRoutesJsonPath = "src/dataReader/data/BusRoutes.json";
     public static void readData() {
         readBusStops();
         readBusServices();
         readLinkData();
-        Set<BusService> set = BUSES;
+        Set<BusService> set = busServiceSet;
         BUS_SERVICES_SORTED = new ArrayList<>(set);
-        Collections.sort(BUS_SERVICES_SORTED, new Comparator<BusService>()
-            {
-                public int compare(BusService b1, BusService b2)
-                    {
-                        return b1.getServiceNo().toUpperCase().compareTo(b2.getServiceNo().toUpperCase());
-                    }
-            });
+        Collections.sort(BUS_SERVICES_SORTED, (BusService b1, BusService b2) -> b1.getServiceNo().toUpperCase().compareTo(b2.getServiceNo().toUpperCase()));
         BUS_STOPS_SORTED = new ArrayList<>(BUS_STOPS.values());
-        Collections.sort(BUS_STOPS_SORTED, new Comparator<BusStop>()
-            {
-                public int compare(BusStop b1, BusStop b2)
-                    {
-                        return b1.getName().toUpperCase().compareTo(b2.getName().toUpperCase());
-                    }
-            });
-    }
-    public static void printData() {
-        BUS_STOPS.forEach((String key, BusStop obj) -> {
-            System.out.println(key + ": " + obj.getName());
-        });
-        System.out.println("BUS_STOPS size " + BUS_STOPS.size());
-//            ArrayList<BusService> bs = new ArrayList<>();
-            for (Map.Entry<BusService, ArrayList<BusLink>> entry : BUS_ROUTES.entrySet()) {
-//                bs.add(entry.getKey());
-//                if(entry.getKey().getServiceNo().equals("812"))
-//                    for(BusLink b : entry.getValue())
-//                        System.out.println(b);
-                System.out.println(entry.getKey().getServiceNo()+" : "+entry.getValue());
-            }
-//            System.out.println(BUSES.size());
-//            BUSES.removeAll(bs);
-//            for (BusService b : BUSES)
-//                System.out.println(b);
-            System.out.println("BUS_ROUTES size " + BUS_ROUTES.size());
-            for(BusLink b : BUS_LINKS)
-                System.out.println(b);
-            System.out.println("BUS_LINKS size" + BUS_LINKS.size());
+        Collections.sort(BUS_STOPS_SORTED, (BusStop b1, BusStop b2) -> b1.getName().toUpperCase().compareTo(b2.getName().toUpperCase()));
     }
     private static void readBusStops(){
         try {
@@ -90,7 +53,7 @@ public class BusData {
                 double longitude = busStop.get("Longitude").getAsDouble();
                 BUS_STOPS.put(busStopCode, new BusStop(busStopCode, roadName, desc, latitude, longitude));
             }
-        } catch (Exception e) {
+        } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -100,13 +63,11 @@ public class BusData {
             JsonElement jelem = new JsonParser().parse(data);
             JsonArray busRoutes = jelem.getAsJsonArray();
             
-//            String prevServiceNo;
             BusStop prevBusStop = null;
             int prevDistance = 0;
             for(JsonElement busRouteElem : busRoutes) {
                 JsonObject busRoute = busRouteElem.getAsJsonObject();
                 JsonElement distanceElem = busRoute.get("Distance");
-//                int distance = 0;
                 String serviceNo = busRoute.get("ServiceNo").getAsString();
                 String busStopCode = busRoute.get("BusStopCode").getAsString();
                 if(!(distanceElem instanceof JsonNull)) { //skip route with null distance
@@ -114,46 +75,26 @@ public class BusData {
                     
                     int direction = busRoute.get("Direction").getAsInt();
                     BusService temp = new BusService(serviceNo, direction);
-                    BusService busService = BUSES.stream().filter(b -> b.equals(temp)).findFirst().get();
+                    BusService busService = busServiceSet.stream().filter(b -> b.equals(temp)).findFirst().get();
                     
                     BusStop busStop = BUS_STOPS.get(busStopCode);
                     
                     if(!BUS_STOP_SERVICE_MAP.containsKey(busStop))
                         BUS_STOP_SERVICE_MAP.put(busStop, new ArrayList<>());
                     BUS_STOP_SERVICE_MAP.get(busStop).add(busService);
-//                    if(busStop == null) {
-//                        System.out.println("asdf" + busStopCode);
-//                    }
+                    if(!BUS_SERVICE_STOP_MAP.containsKey(busService))
+                        BUS_SERVICE_STOP_MAP.put(busService, new ArrayList<>());
+                    BUS_SERVICE_STOP_MAP.get(busService).add(busStop);
                     if(distance != 0) {
                         BusLink busLink = new BusLink(Integer.toString(BUS_LINKS.size() + 1), prevBusStop, busStop, distance - prevDistance, false);
                         if (!BUS_LINKS.contains(busLink))
                             BUS_LINKS.add(busLink);
-                        if(!BUS_ROUTES.containsKey(busService))
-                            BUS_ROUTES.put(busService, new ArrayList<>());
-                        BUS_ROUTES.get(busService).add(busLink);
                     }
                     prevBusStop = busStop;
                     prevDistance = distance;
                 }
-//                else
-//                    System.out.println(serviceNo + ", " + busStopCode);
             }
-//            ArrayList<BusService> bs = new ArrayList<>();
-//            for (Map.Entry<BusService, ArrayList<BusLink>> entry : BUS_ROUTES.entrySet()) {
-//                bs.add(entry.getKey());
-//                if(entry.getKey().getServiceNo().equals("812"))
-//                    for(BusLink b : entry.getValue())
-//                        System.out.println(b);
-//                System.out.println(entry.getKey().getServiceNo()+" : "+entry.getValue());
-//            }
-//            System.out.println(BUSES.size());
-//            BUSES.removeAll(bs);
-//            for (BusService b : BUSES)
-//                System.out.println(b);
-//            System.out.println(BUS_ROUTES.size());
-//            for(BusLink b : BUS_LINKS)
-//                System.out.println(b);
-        } catch (Exception ex) {
+        } catch (JsonSyntaxException ex) {
             ex.printStackTrace();
         }
     }
@@ -167,37 +108,17 @@ public class BusData {
                 JsonObject busService = busServiceElem.getAsJsonObject();
                 String serviceNo = busService.get("ServiceNo").getAsString();
                 int direction = busService.get("Direction").getAsInt();
-                BUSES.add(new BusService(serviceNo, direction));
-//                if(serviceNo.equals("307"))
-//                    System.out.println("asdf");
-//                System.out.println(BUSES.add(new BusService(serviceNo, direction)));
-//                System.out.println(BUSES.contains(new BusService(serviceNo, direction)));
-//                System.out.println(BUSES.add(new BusService(serviceNo, direction)));
+                busServiceSet.add(new BusService(serviceNo, direction));
             }
-//            BUSES.forEach((BusService obj) -> {
-//                System.out.println(obj.getServiceNo() + ", " + obj.getDirection());
-//            });
-//            System.out.println(BUSES.size());
-        } catch (Exception e) {
+        } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }
     }
-//    private static void getBusStops(String servno, int dir) {
-//        BusService temp = new BusService(servno, dir);
-//        BusService busService = null;
-//        if(BUSES.stream().filter(b -> b.equals(temp)).findFirst().isPresent())
-//            busService = BUSES.stream().filter(b -> b.getServiceNo().equals(servno)).findFirst().get();
-//        else
-//            System.out.println("no bus service");
-//        for(BusLink bl : BUS_ROUTES.get(busService))
-//            System.out.println(bl);
-//    }
     private static String readTextFile(String path) {
         String data = "";
         try {
             ArrayList<String> lines = (ArrayList<String>) Files.readAllLines(Paths.get(path));
-            for(String line : lines)
-                data += line;
+            data = lines.stream().map((line) -> line).reduce(data, String::concat);
         } catch (IOException ex) {
             ex.printStackTrace();
         }

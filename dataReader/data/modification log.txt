@@ -1,0 +1,84 @@
+5267 bus stops
+23518 bus routes
+554 bus services
+
+modification:
+deleted bus route
+because bus stop 17439 doesnt exist
+	{
+		"ServiceNo": "589",
+		"Operator": "SMRT",
+		"Direction": 1,
+		"StopSequence": 2,
+		"BusStopCode": "17439",
+		"Distance": 0.2,
+		"WD_FirstBus": "0800",
+		"WD_LastBus": "0800",
+		"SAT_FirstBus": "-",
+		"SAT_LastBus": "-",
+		"SUN_FirstBus": "-",
+		"SUN_LastBus": "-"
+	},
+
+
+deleted bus services 307, 811, 812
+because duplicates, only diff is loopdesc
+    {
+        "ServiceNo":"307",
+        "Operator":"SMRT",
+        "Direction":1,
+        "Category":"INTRA-TOWN",
+        "OriginCode":"44009",
+        "DestinationCode":"44009",
+        "AM_Peak_Freq":"4-9",
+        "AM_Offpeak_Freq":"7-11",
+        "PM_Peak_Freq":"7-10",
+        "PM_Offpeak_Freq":"8-15",
+        "LoopDesc":"Teck Whye Ave"
+    },
+
+    {
+        "ServiceNo":"811",
+        "Operator":"SMRT",
+        "Direction":1,
+        "Category":"INTRA-TOWN",
+        "OriginCode":"59009",
+        "DestinationCode":"59161",
+        "AM_Peak_Freq":"3-7",
+        "AM_Offpeak_Freq":"5-9",
+        "PM_Peak_Freq":"4-10",
+        "PM_Offpeak_Freq":"5-14",
+        "LoopDesc":"Yishun Ave 2"
+    },
+
+    {
+        "ServiceNo":"812",
+        "Operator":"SMRT",
+        "Direction":1,
+        "Category":"INTRA-TOWN",
+        "OriginCode":"59009",
+        "DestinationCode":"59161",
+        "AM_Peak_Freq":"9-10",
+        "AM_Offpeak_Freq":"8-12",
+        "PM_Peak_Freq":"9-10",
+        "PM_Offpeak_Freq":"9-16",
+        "LoopDesc":"Yishun Ave 4"
+    },
+
+removed mrts because doesnt have links to them yet:
+            {
+                "id": "EW30",
+                "name": "Gul Circle"
+            },
+            {
+                "id": "EW31",
+                "name": "Tuas Crescent"
+            },
+            {
+                "id": "EW32",
+                "name": "Tuas West Road"
+            },
+            {
+                "id": "EW33",
+                "name": "Tuas Link"
+            },

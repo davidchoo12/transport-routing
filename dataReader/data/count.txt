@@ -1,0 +1,3 @@
+5267 bus stops (4858 bus stops reachable)
+554 bus services (551 unique bus services)
+23518 bus routes

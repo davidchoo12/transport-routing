@@ -8,14 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 public class Algorithm {
-    private final List<? extends Node> nodes;
     private final List<? extends Link> links;
     private Set<Node> settledNodes;
     private Set<Node> unsettledNodes;
     private Map<Node, Node> predecessors;
     private Map<Node, Integer> distance;
-    public Algorithm(List<? extends Node> nodes, List<? extends Link> links){
-        this.nodes = nodes;
+    public Algorithm(List<? extends Link> links){
         this.links = links;
     }
     public void execute(Node source){

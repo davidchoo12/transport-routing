@@ -3,12 +3,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,20 +22,13 @@ public class MrtData {
     public static List<Mrt> MRTS_LIST_SORTED;
     public static List<MrtLink> MRT_LINKS = new ArrayList<>();
     public static HashMap<MrtLine, ArrayList<Mrt>> MRT_LINES = new HashMap<>();
-    private static String mrtJsonPath = "src/dataReader/mrt.json";
-    private static String linksJsonPath = "src/dataReader/links.json";
+    private static String mrtJsonPath = "src/dataReader/data/mrt.json";
+    private static String linksJsonPath = "src/dataReader/data/links.json";
     public static void readData() {
         readMrtData();
         readLinkData();
         MRTS_LIST_SORTED = new ArrayList<>(MRTS_MAP.values());
-        Collections.sort(MRTS_LIST_SORTED, new Comparator<Mrt>()
-            {
-                @Override
-                public int compare(Mrt m1, Mrt m2)
-                    {
-                        return m1.getName().toUpperCase().compareTo(m2.getName().toUpperCase());
-                    }
-            });
+        Collections.sort(MRTS_LIST_SORTED, (Mrt m1, Mrt m2) -> m1.getName().toUpperCase().compareTo(m2.getName().toUpperCase()));
     }
     private static void readMrtData(){
         try {
@@ -65,18 +56,7 @@ public class MrtData {
                         MRTS_MAP.put(name, mrt);
                 }
             }
-//            MRTS_MAP.forEach((String key, Mrt obj) -> {
-//                System.out.print(key + ": ");
-//                obj.getMrtCodes().forEach((String code) -> {
-//                    System.out.print(code + ", ");
-//                });
-//                System.out.println();
-//            });
-            
-//            for(Mrt m : MRTS_MAP) {
-//                System.out.println(m.getId() + m.getName());
-//            }
-        } catch (Exception e) {
+        } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -100,10 +80,7 @@ public class MrtData {
                 }
                 MRT_LINKS.add(new MrtLink(Integer.toString(MRT_LINKS.size()+1), mrt1, mrt2, time, true));
             }
-//            for(MrtLink ml : MRT_LINKS) {
-//                System.out.println(ml.toString() + ml.getWeight());
-//            }
-        } catch (Exception ex) {
+        } catch (JsonSyntaxException ex) {
             ex.printStackTrace();
         }
     }

@@ -1,3 +1,0 @@
-5267 bus stops
-554 bus services
-23518 bus routes
