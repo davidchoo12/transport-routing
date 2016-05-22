@@ -21,10 +21,12 @@ import models.BusService;
 import models.BusStop;
 public class BusData {
     public static HashSet<BusService> BUSES = new HashSet<>();
-    public static List<BusService> BUS_LIST_SORTED;
+    public static List<BusService> BUS_SERVICES_SORTED;
     public static HashMap<String, BusStop> BUS_STOPS = new HashMap<>();
+    public static List<BusStop> BUS_STOPS_SORTED;
     public static List<BusLink> BUS_LINKS = new ArrayList<>();
     public static HashMap<BusService, ArrayList<BusLink>> BUS_ROUTES = new HashMap<>();
+    public static HashMap<BusStop, ArrayList<BusService>>  BUS_STOP_SERVICE_MAP = new HashMap<>();
     
 //    public static ArrayList<ArrayList<MrtLink>>
     private static String busServicesJsonPath = "src/dataReader/BusServices.json";
@@ -35,14 +37,44 @@ public class BusData {
         readBusServices();
         readLinkData();
         Set<BusService> set = BUSES;
-        BUS_LIST_SORTED = new ArrayList<>(set);
-        Collections.sort(BUS_LIST_SORTED, new Comparator<BusService>()
+        BUS_SERVICES_SORTED = new ArrayList<>(set);
+        Collections.sort(BUS_SERVICES_SORTED, new Comparator<BusService>()
             {
                 public int compare(BusService b1, BusService b2)
                     {
                         return b1.getServiceNo().toUpperCase().compareTo(b2.getServiceNo().toUpperCase());
                     }
             });
+        BUS_STOPS_SORTED = new ArrayList<>(BUS_STOPS.values());
+        Collections.sort(BUS_STOPS_SORTED, new Comparator<BusStop>()
+            {
+                public int compare(BusStop b1, BusStop b2)
+                    {
+                        return b1.getName().toUpperCase().compareTo(b2.getName().toUpperCase());
+                    }
+            });
+    }
+    public static void printData() {
+        BUS_STOPS.forEach((String key, BusStop obj) -> {
+            System.out.println(key + ": " + obj.getName());
+        });
+        System.out.println("BUS_STOPS size " + BUS_STOPS.size());
+//            ArrayList<BusService> bs = new ArrayList<>();
+            for (Map.Entry<BusService, ArrayList<BusLink>> entry : BUS_ROUTES.entrySet()) {
+//                bs.add(entry.getKey());
+//                if(entry.getKey().getServiceNo().equals("812"))
+//                    for(BusLink b : entry.getValue())
+//                        System.out.println(b);
+                System.out.println(entry.getKey().getServiceNo()+" : "+entry.getValue());
+            }
+//            System.out.println(BUSES.size());
+//            BUSES.removeAll(bs);
+//            for (BusService b : BUSES)
+//                System.out.println(b);
+            System.out.println("BUS_ROUTES size " + BUS_ROUTES.size());
+            for(BusLink b : BUS_LINKS)
+                System.out.println(b);
+            System.out.println("BUS_LINKS size" + BUS_LINKS.size());
     }
     private static void readBusStops(){
         try {
@@ -58,10 +90,6 @@ public class BusData {
                 double longitude = busStop.get("Longitude").getAsDouble();
                 BUS_STOPS.put(busStopCode, new BusStop(busStopCode, roadName, desc, latitude, longitude));
             }
-//            BUS_STOPS.forEach((String key, BusStop obj) -> {
-//                System.out.println(key + ": " + obj.getName());
-//            });
-//            System.out.println(BUS_STOPS.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -89,6 +117,10 @@ public class BusData {
                     BusService busService = BUSES.stream().filter(b -> b.equals(temp)).findFirst().get();
                     
                     BusStop busStop = BUS_STOPS.get(busStopCode);
+                    
+                    if(!BUS_STOP_SERVICE_MAP.containsKey(busStop))
+                        BUS_STOP_SERVICE_MAP.put(busStop, new ArrayList<>());
+                    BUS_STOP_SERVICE_MAP.get(busStop).add(busService);
 //                    if(busStop == null) {
 //                        System.out.println("asdf" + busStopCode);
 //                    }

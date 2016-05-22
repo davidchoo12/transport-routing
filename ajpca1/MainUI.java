@@ -25,6 +25,9 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import routing.MrtRoute;
 import ui.EnabledJComboBoxRenderer;
+import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.swing.BrowserView;
+import routing.BusRoute;
 
 /**
  *
@@ -41,7 +44,9 @@ public class MainUI extends javax.swing.JFrame {
         initComponents();
         startMrtComboBox.setModel(new DefaultComboBoxModel(MrtData.MRTS_LIST_SORTED.toArray()));
         endMrtComboBox.setModel(new DefaultComboBoxModel(MrtData.MRTS_LIST_SORTED.toArray()));
-        busNoComboBox.setModel(new DefaultComboBoxModel(BusData.BUS_LIST_SORTED.toArray()));
+        busNoComboBox.setModel(new DefaultComboBoxModel(BusData.BUS_SERVICES_SORTED.toArray()));
+        startBusStopComboBox.setModel(new DefaultComboBoxModel(BusData.BUS_STOPS_SORTED.toArray()));
+        endBusStopComboBox.setModel(new DefaultComboBoxModel(BusData.BUS_STOPS_SORTED.toArray()));
     }
     private void appendToPane(JTextPane tp, String msg, Color c)
     {
@@ -66,7 +71,7 @@ public class MainUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mrtTab = new javax.swing.JTabbedPane();
+        busStopTab = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         startMrtComboBox = new javax.swing.JComboBox();
@@ -83,6 +88,17 @@ public class MainUI extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         busServiceTextArea = new javax.swing.JTextArea();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        startBusStopComboBox = new javax.swing.JComboBox();
+        endBusStopComboBox = new javax.swing.JComboBox();
+        jLabel5 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        busStopTextArea = new javax.swing.JTextArea();
+        busStopFindPathButton = new javax.swing.JButton();
+        busStopSwapButton = new javax.swing.JButton();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        busStopTextPane = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -160,7 +176,7 @@ public class MainUI extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        mrtTab.addTab("MRT", jPanel1);
+        busStopTab.addTab("MRT", jPanel1);
 
         busNoComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -203,49 +219,139 @@ public class MainUI extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        mrtTab.addTab("Bus Service", jPanel2);
+        busStopTab.addTab("Bus Service", jPanel2);
+
+        jLabel4.setText("Starting bus stop");
+
+        jLabel5.setText("Destination bus stop");
+
+        busStopTextArea.setEditable(false);
+        busStopTextArea.setColumns(20);
+        busStopTextArea.setFont(new java.awt.Font("Consolas", 0, 13)); // NOI18N
+        busStopTextArea.setRows(5);
+        jScrollPane4.setViewportView(busStopTextArea);
+
+        busStopFindPathButton.setText("Find Path");
+        busStopFindPathButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                busStopFindPathButtonActionPerformed(evt);
+            }
+        });
+
+        busStopSwapButton.setText("Swap");
+        busStopSwapButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                busStopSwapButtonActionPerformed(evt);
+            }
+        });
+
+        busStopTextPane.setFont(new java.awt.Font("Consolas", 0, 13)); // NOI18N
+        jScrollPane5.setViewportView(busStopTextPane);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5)
+                            .addComponent(endBusStopComboBox, 0, 355, Short.MAX_VALUE)
+                            .addComponent(startBusStopComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(43, 43, 43)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(busStopFindPathButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(busStopSwapButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 148, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane4))
+                        .addContainerGap())))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(startBusStopComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(busStopSwapButton))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(endBusStopComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(busStopFindPathButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        busStopTab.addTab("Bus Stop", jPanel4);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mrtTab)
+            .addComponent(busStopTab)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mrtTab)
+            .addComponent(busStopTab)
         );
 
-        mrtTab.getAccessibleContext().setAccessibleName("MRT");
+        busStopTab.getAccessibleContext().setAccessibleName("MRT");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void findPathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findPathButtonActionPerformed
-        Mrt start = (Mrt)startMrtComboBox.getSelectedItem();
-        Mrt end = (Mrt)endMrtComboBox.getSelectedItem();
-        MrtRoute mr = new MrtRoute();
-        LinkedList<Mrt> llm = mr.getMrtRoute(start.getName(), end.getName());
-        mrtTextArea.setText(""); //clear text area
-        mrtTextPane.setText("");
-//        mrtTextArea.setText("----start of path----\n");
-        for(Mrt m : llm) {
-            mrtTextArea.append(m.toString() + "\n");
-            appendToPane(mrtTextPane, m.toString() + "\n", m.getMrtLine().getLineColor());
+    private void busStopSwapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_busStopSwapButtonActionPerformed
+        int startSelected = startBusStopComboBox.getSelectedIndex();
+        int endSelected = endBusStopComboBox.getSelectedIndex();
+        startBusStopComboBox.setSelectedIndex(endSelected);
+        endBusStopComboBox.setSelectedIndex(startSelected);
+    }//GEN-LAST:event_busStopSwapButtonActionPerformed
+
+    private void busStopFindPathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_busStopFindPathButtonActionPerformed
+        BusStop start = (BusStop)startBusStopComboBox.getSelectedItem();
+        BusStop end = (BusStop)endBusStopComboBox.getSelectedItem();
+        BusRoute br = new BusRoute();
+        System.out.println("start finding path");
+        LinkedList<BusRoute.BusSubRoute> llb = br.getBusSubRoutes(start.getId(), end.getId());
+        System.out.println("path found");
+        busStopTextArea.setText(""); //clear text area
+        busStopTextPane.setText("");
+        //        mrtTextArea.setText("----start of path----\n");
+        LinkedList<BusStop> llbs = br.getBusRoute("19029", "19081");
+        for(BusStop bs : llbs) {
+            busStopTextArea.append(bs + "\n");
         }
-//        mrtTextArea.append("----end of path----\n");
-    }//GEN-LAST:event_findPathButtonActionPerformed
+        for(BusRoute.BusSubRoute b : llb) {
+            busStopTextArea.append(b.toString() + "\n");
+            System.out.println(b.toString());
+//            appendToPane(mrtTextPane, m.toString() + "\n", m.getMrtLine().getLineColor());
+        }
+        //        mrtTextArea.append("----end of path----\n");
+    }//GEN-LAST:event_busStopFindPathButtonActionPerformed
 
     private void busNoComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_busNoComboBoxActionPerformed
         BusService selected = (BusService)busNoComboBox.getSelectedItem();
         ArrayList<BusLink> links = BusData.BUS_ROUTES.get(selected);
         busServiceTextArea.setText(""); //clear text area
-//        busServiceTextArea.setText("----start of bus stops----\n");
+        //        busServiceTextArea.setText("----start of bus stops----\n");
         for (BusLink link : links) {
             busServiceTextArea.append(link.getSource().toString() + "\n");
         }
         busServiceTextArea.append(links.get(links.size()-1).getDestination().toString() + "\n");
-//        busServiceTextArea.append("----end of bus stops----\n");
+        //        busServiceTextArea.append("----end of bus stops----\n");
         busServiceTextArea.setCaretPosition(0);
     }//GEN-LAST:event_busNoComboBoxActionPerformed
 
@@ -255,6 +361,21 @@ public class MainUI extends javax.swing.JFrame {
         startMrtComboBox.setSelectedIndex(endSelected);
         endMrtComboBox.setSelectedIndex(startSelected);
     }//GEN-LAST:event_swapButtonActionPerformed
+
+    private void findPathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findPathButtonActionPerformed
+        Mrt start = (Mrt)startMrtComboBox.getSelectedItem();
+        Mrt end = (Mrt)endMrtComboBox.getSelectedItem();
+        MrtRoute mr = new MrtRoute();
+        LinkedList<Mrt> llm = mr.getMrtRoute(start.getName(), end.getName());
+        mrtTextArea.setText(""); //clear text area
+        mrtTextPane.setText("");
+        //        mrtTextArea.setText("----start of path----\n");
+        for(Mrt m : llm) {
+            mrtTextArea.append(m.toString() + "\n");
+            appendToPane(mrtTextPane, m.toString() + "\n", m.getMrtLine().getLineColor());
+        }
+        //        mrtTextArea.append("----end of path----\n");
+    }//GEN-LAST:event_findPathButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -274,19 +395,30 @@ public class MainUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox busNoComboBox;
     private javax.swing.JTextArea busServiceTextArea;
+    private javax.swing.JButton busStopFindPathButton;
+    private javax.swing.JButton busStopSwapButton;
+    private javax.swing.JTabbedPane busStopTab;
+    private javax.swing.JTextArea busStopTextArea;
+    private javax.swing.JTextPane busStopTextPane;
+    private javax.swing.JComboBox endBusStopComboBox;
     private javax.swing.JComboBox endMrtComboBox;
     private javax.swing.JButton findPathButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTabbedPane mrtTab;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTextArea mrtTextArea;
     private javax.swing.JTextPane mrtTextPane;
+    private javax.swing.JComboBox startBusStopComboBox;
     private javax.swing.JComboBox startMrtComboBox;
     private javax.swing.JButton swapButton;
     // End of variables declaration//GEN-END:variables
