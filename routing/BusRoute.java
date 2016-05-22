@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.ListIterator;
 public class BusRoute {
     public BusRoute() {
-        BusData.readData();
+//        BusData.readData();
     }
     public LinkedList<BusStop> getBusRoute(String start, String end) {
 //        System.out.println(BusData.BUS_STOPS.get(start) +  " " + BusData.BUS_STOPS.get(end));
@@ -21,14 +21,9 @@ public class BusRoute {
         a.execute(start);
         return (LinkedList<BusStop>)a.getPath(end);
     }
-    public LinkedList<BusSubRoute> getBusSubRoutes(String start, String end) {
-        return getBusSubRoutes(BusData.BUS_STOPS.get(start), BusData.BUS_STOPS.get(end));
-    }
-    private LinkedList<BusSubRoute> getBusSubRoutes(BusStop start, BusStop end) {
+    public LinkedList<BusSubRoute> getBusSubRoutes(LinkedList<BusStop> busStops){
         List<BusService> eligibleBuses = new ArrayList<>();
-        
         LinkedList<BusSubRoute> result = new LinkedList<>();
-        LinkedList<BusStop> busStops = getBusRoute(start, end);
         ListIterator<BusStop> it = busStops.listIterator();
         int startSubRouteIndex = 0;
         List<BusService> copy = null;
@@ -38,12 +33,13 @@ public class BusRoute {
             if(eligibleBuses.isEmpty())
                 eligibleBuses.addAll(busServicesAvailable);
             else {
-                copy = eligibleBuses;
+                copy = new ArrayList<>(eligibleBuses);
                 if(eligibleBuses.retainAll(busServicesAvailable)){ //if there are changes
                     if(eligibleBuses.isEmpty()) { //if no more intersecting bus service
                         BusSubRoute subRoute = new BusSubRoute(busStops.subList(startSubRouteIndex, it.previousIndex()), copy);
                         result.add(subRoute);
-                        startSubRouteIndex = it.nextIndex();
+                        startSubRouteIndex = it.previousIndex() - 1;
+                        it.previous();
                     }
                 }
             }
@@ -52,6 +48,13 @@ public class BusRoute {
         result.add(subRoute);
                         
         return result;
+    }
+    public LinkedList<BusSubRoute> getBusSubRoutes(String start, String end) {
+        return getBusSubRoutes(BusData.BUS_STOPS.get(start), BusData.BUS_STOPS.get(end));
+    }
+    private LinkedList<BusSubRoute> getBusSubRoutes(BusStop start, BusStop end) {
+        LinkedList<BusStop> busStops = getBusRoute(start, end);
+        return getBusSubRoutes(busStops);
     }
     public class BusSubRoute {
         public LinkedList<BusStop> busStops;
@@ -68,7 +71,7 @@ public class BusRoute {
             for(BusService b : busServices) {
                 result += b.getServiceNo() + ", ";
             }
-            result = result.substring(0, result.length() - 3) + "\nFor the following " + busStops.size() + " bus stops:\n"; //remove last ", "
+            result = result.substring(0, result.length() - 2) + "\nFor the following " + busStops.size() + " bus stops:\n"; //remove last ", "
             for(BusStop b : busStops) {
                 result += b.getName() + "\n";
             }

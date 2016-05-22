@@ -37,5 +37,10 @@ public class BusStop extends Node{
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
+
+    @Override
+    public String toString() {
+        return this.getName() + " (" + this.getId() + ")";
+    }
     
 }

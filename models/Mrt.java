@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 public class Mrt extends Node{
     private List<String> mrtCodes;
-    private MrtLine mrtLine;
+    private List<MrtLine> mrtLines;
     public Mrt(String id, String mrtCode, String name, MrtLine mrtLine) {
         super(id, name);
         this.mrtCodes = new ArrayList<>();
         this.mrtCodes.add(mrtCode);
-        this.mrtLine = mrtLine;
+        this.mrtLines = new ArrayList<>();
+        this.mrtLines.add(mrtLine);
     }
     public void addMrtCode(String mrtCode) {
         this.mrtCodes.add(mrtCode);
@@ -31,7 +32,13 @@ public class Mrt extends Node{
         return this.getName() + " " + mrtCodes;
     } 
 
-    public MrtLine getMrtLine() {
-        return mrtLine;
+    public List<MrtLine> getMrtLines() {
+        return mrtLines;
+    }
+    public void addMrtLine(MrtLine mrtLine) {
+        this.mrtLines.add(mrtLine);
+    }
+    public boolean isInterchange() {
+        return this.mrtLines.size() > 1;
     }
 }

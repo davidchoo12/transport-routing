@@ -23,7 +23,7 @@ public class MrtData {
     public static HashMap<String, Mrt> MRTS_MAP = new HashMap<>();
     public static List<Mrt> MRTS_LIST_SORTED;
     public static List<MrtLink> MRT_LINKS = new ArrayList<>();
-//    public static ArrayList<ArrayList<MrtLink>>
+    public static HashMap<MrtLine, ArrayList<Mrt>> MRT_LINES = new HashMap<>();
     private static String mrtJsonPath = "src/dataReader/mrt.json";
     private static String linksJsonPath = "src/dataReader/links.json";
     public static void readData() {
@@ -32,6 +32,7 @@ public class MrtData {
         MRTS_LIST_SORTED = new ArrayList<>(MRTS_MAP.values());
         Collections.sort(MRTS_LIST_SORTED, new Comparator<Mrt>()
             {
+                @Override
                 public int compare(Mrt m1, Mrt m2)
                     {
                         return m1.getName().toUpperCase().compareTo(m2.getName().toUpperCase());
@@ -49,15 +50,19 @@ public class MrtData {
                 String lineName = mrtLine.get("lineName").getAsString();
                 int color = mrtLine.get("rgbInt").getAsInt();
                 MrtLine line = new MrtLine(lineId, lineName, new Color(color));
+                MRT_LINES.put(line, new ArrayList<>());
                 for(JsonElement mrtStationElem : mrtLine.get("stations").getAsJsonArray()) {
                     JsonObject mrtStation = mrtStationElem.getAsJsonObject();
                     String id = mrtStation.get("id").getAsString();
                     String name = mrtStation.get("name").getAsString();
-                    
-                    if(MRTS_MAP.containsKey(name))
+                    Mrt mrt = new Mrt(Integer.toString(MRTS_MAP.size() + 1), id, name, line);
+                    MRT_LINES.get(line).add(mrt);
+                    if(MRTS_MAP.containsKey(name)) {
                         MRTS_MAP.get(name).addMrtCode(id);
+                        MRTS_MAP.get(name).addMrtLine(line);
+                    }
                     else
-                        MRTS_MAP.put(name, new Mrt(Integer.toString(MRTS_MAP.size() + 1), id, name, line));
+                        MRTS_MAP.put(name, mrt);
                 }
             }
 //            MRTS_MAP.forEach((String key, Mrt obj) -> {
